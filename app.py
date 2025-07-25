@@ -303,11 +303,4 @@ def account():
 
 # --- UYGULAMAYI ÇALIŞTIRMA BLOĞU ---
 if __name__ == '__main__':
-    with app.app_context():
-        db.create_all()
-        if Category.query.count() == 0:
-            default_categories = ['Elektronik', 'Kitap', 'Giyim', 'Ev & Yaşam', 'Kozmetik']
-            for cat_name in default_categories:
-                db.session.add(Category(name=cat_name))
-            db.session.commit()
     app.run(debug=True)
