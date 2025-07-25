@@ -301,6 +301,38 @@ def account():
 
     return render_template('account.html', current_user=user)
 
+@app.cli.command("init-db")
+def init_db_command():
+    """Veritabanını temizler ve yeniden oluşturur."""
+    db.create_all()
+    print("Veritabanı tabloları oluşturuldu.")
+    if Category.query.count() == 0:
+        print("Varsayılan kategoriler ekleniyor...")
+        default_categories = ['Elektronik', 'Kitap', 'Giyim', 'Ev & Yaşam', 'Kozmetik']
+        for cat_name in default_categories:
+            db.session.add(Category(name=cat_name))
+        db.session.commit()
+        print("Kategoriler eklendi.")
+    else:
+        print("Kategoriler zaten mevcut.")
+
+
 # --- UYGULAMAYI ÇALIŞTIRMA BLOĞU ---
+
+@app.cli.command("init-db")
+def init_db_command():
+    """Veritabanını temizler ve yeniden oluşturur."""
+    db.create_all()
+    print("Veritabanı tabloları oluşturuldu.")
+    if Category.query.count() == 0:
+        print("Varsayılan kategoriler ekleniyor...")
+        default_categories = ['Elektronik', 'Kitap', 'Giyim', 'Ev & Yaşam', 'Kozmetik']
+        for cat_name in default_categories:
+            db.session.add(Category(name=cat_name))
+        db.session.commit()
+        print("Kategoriler eklendi.")
+    else:
+        print("Kategoriler zaten mevcut.")
+
 if __name__ == '__main__':
     app.run(debug=True)
