@@ -1,0 +1,39 @@
+<!-- templates/upload.html (Kategori Eklendi) -->
+{% extends "base.html" %}
+
+{% block title %}Yeni Ürün Yükle{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <h1 class="mb-4">Yeni Ürün Yükle</h1>
+        <hr class="mb-4">
+        <form method="POST" enctype="multipart/form-data">
+            <div class="mb-3">
+                <label for="name" class="form-label">Ürün Adı</label>
+                <input type="text" class="form-control" id="name" name="name" required>
+            </div>
+            <div class="mb-3">
+                <label for="description" class="form-label">Açıklama</label>
+                <textarea class="form-control" id="description" name="description" rows="5" required></textarea>
+            </div>
+            <!-- YENİ KATEGORİ ALANI -->
+            <div class="mb-3">
+                <label for="category" class="form-label">Kategori</label>
+                <select class="form-select" id="category" name="category_id" required>
+                    <option selected disabled value="">Seçiniz...</option>
+                    {% for cat in all_categories %}
+                        <option value="{{ cat.id }}">{{ cat.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <!-- YENİ KATEGORİ ALANI SONU -->
+            <div class="mb-3">
+                <label for="image" class="form-label">Ürün Resmi</label>
+                <input type="file" class="form-control" id="image" name="image" accept="image/png, image/jpeg, image/gif" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Ürünü Ekle</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

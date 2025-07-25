@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% from 'macros.html' import render_pagination, render_stars %}
+
+{% block title %}Ana Sayfa{% endblock %}
+
+{% block content %}
+<div class="px-4 py-5 my-5 text-center">
+    <h1 class="display-5 fw-bold">Tüm Ürünler</h1>
+    <div class="col-lg-6 mx-auto">
+        <p class="lead mb-4">Beğendiğiniz ürünleri inceleyin, yorum yapın ve kendi kullandığınız ürünleri toplulukla paylaşın.</p>
+    </div>
+</div>
+
+<hr>
+
+{% if products_pagination.items %}
+    <!-- Bootstrap Grid Sistemi -->
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        {% for product in products_pagination.items %}
+            <div class="col">
+                <!-- Bootstrap Card Bileşeni -->
+                <div class="card h-100 shadow-sm">
+                    <a href="{{ url_for('product_detail', product_id=product.id) }}" class="text-decoration-none text-dark">
+                        <img src="{{ url_for('static', filename=product.image_path) }}" class="card-img-top" alt="{{ product.name }}" style="height: 225px; object-fit: cover;">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ product.name }}</h5>
+                            
+                            <!-- ORTALAMA PUAN YILDIZLARI EKLENDİ -->
+                            <div class="mb-2">
+                                {{ render_stars(product.avg_rating) }}
+                            </div>
+
+                            <p class="card-text">{{ product.description[:80] }}...</p>
+                        </div>
+                    </a>
+                    <div class="card-footer d-flex justify-content-between align-items-center">
+                        <small class="text-muted">Ekleyen: <a href="{{ url_for('profile', username=product.author.username) }}" class="text-decoration-none fw-bold">{{ product.author.username }}</a></small>
+                        <span class="badge bg-secondary">{{ product.category.name }}</span>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+    <!-- SAYFALAMA LİNKLERİ -->
+    <div class="mt-5">
+        {{ render_pagination(products_pagination, 'index') }}
+    </div>
+
+{% else %}
+    <div class="alert alert-info" role="alert">
+        Bu kriterlere uyan hiç ürün bulunamadı. Filtreleri temizlemek için <a href="{{ url_for('index') }}" class="alert-link">tıklayın</a>.
+    </div>
+{% endif %}
+{% endblock %}

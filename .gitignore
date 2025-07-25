@@ -1,0 +1,12 @@
+# Sanal Ortam
+venv/
+
+# Veritabanı ve Instance Klasörü
+instance/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# VS Code ayarları
+.vscode/

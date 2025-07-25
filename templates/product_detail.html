@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+{% from 'macros.html' import render_stars %}
+
+{% block title %}{{ product.name }}{% endblock %}
+
+{% block content %}
+<style>
+    /* Yıldız Puanlama Sistemi İçin CSS */
+    .rating { display: flex; flex-direction: row-reverse; justify-content: flex-end; }
+    .rating > input{ display:none;}
+    .rating > label { position: relative; width: 1.5em; font-size: 2rem; color: #FFD700; cursor: pointer; }
+    .rating > label::before{ content: "\2605"; position: absolute; opacity: 0; }
+    .rating > label:hover:before,
+    .rating > label:hover ~ label:before { opacity: 1 !important; }
+    .rating > input:checked ~ label:before{ opacity:1; }
+    .rating:hover > input:checked ~ label:before{ opacity: 0.4; }
+</style>
+
+<div class="row">
+    <div class="col-md-6">
+        <img src="{{ url_for('static', filename=product.image_path) }}" alt="{{ product.name }}" class="img-fluid rounded shadow-sm">
+    </div>
+    <div class="col-md-6">
+        <h1 class="display-5">{{ product.name }}</h1>
+        <div class="mb-2">
+            {{ render_stars(product.avg_rating) }}
+        </div>
+        <p class="text-muted">Ekleyen: <a href="{{ url_for('profile', username=product.author.username) }}" class="text-decoration-none fw-bold">{{ product.author.username }}</a></p>
+        
+        {% if session.get('user_id') == product.author.id %}
+            <div class="my-3">
+                <a href="{{ url_for('edit_product', product_id=product.id) }}" class="btn btn-warning">Düzenle</a>
+                <form action="{{ url_for('delete_product', product_id=product.id) }}" method="POST" class="d-inline" onsubmit="return confirm('Bu ürünü silmek istediğinizden emin misiniz?');">
+                    <button type="submit" class="btn btn-danger">Sil</button>
+                </form>
+            </div>
+        {% endif %}
+        
+        <hr>
+        <p class="lead">{{ product.description }}</p>
+    </div>
+</div>
+
+<div class="row mt-5">
+    <div class="col-md-8 offset-md-2">
+        <h2>Yorumlar ({{ comments|length }})</h2>
+        <hr>
+        {% if 'user_id' in session %}
+            <div class="card my-4">
+                <div class="card-body">
+                    <h5 class="card-title">Yorumunuzu Yazın</h5>
+                    <form method="POST">
+                        <div class="mb-3">
+                            <label class="form-label">Puanınız</label>
+                            <div class="rating">
+                                <input type="radio" name="rating" id="star5" value="5" required><label for="star5">☆</label>
+                                <input type="radio" name="rating" id="star4" value="4"><label for="star4">☆</label>
+                                <input type="radio" name="rating" id="star3" value="3"><label for="star3">☆</label>
+                                <input type="radio" name="rating" id="star2" value="2"><label for="star2">☆</label>
+                                <input type="radio" name="rating" id="star1" value="1"><label for="star1">☆</label>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <textarea name="comment_text" class="form-control" rows="3" placeholder="Yorumunuzu buraya yazın..." required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Yorumu Gönder</button>
+                    </form>
+                </div>
+            </div>
+        {% else %}
+            <div class="alert alert-secondary"> Yorum yapmak için lütfen <a href="{{ url_for('login', next=request.url) }}" class="alert-link">giriş yapın</a>. </div>
+        {% endif %}
+
+        {% for comment in comments %}
+            <div class="card mb-3">
+                <div class="card-body">
+                    <div class="mb-2">
+                        {{ render_stars(comment.rating) }}
+                    </div>
+                    <p>{{ comment.text }}</p>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <small class="text-muted">
+                            <strong><a href="{{ url_for('profile', username=comment.author.username) }}" class="text-decoration-none">{{ comment.author.username }}</a></strong> tarafından 
+                            {{ comment.date_posted.strftime('%d-%m-%Y') }} tarihinde yazıldı.
+                        </small>
+                        {% if session.get('user_id') == comment.author.id %}
+                            <div>
+                                <a href="{{ url_for('edit_comment', comment_id=comment.id) }}" class="btn btn-sm btn-outline-secondary me-1">Düzenle</a>
+                                <form action="{{ url_for('delete_comment', comment_id=comment.id) }}" method="POST" class="d-inline" onsubmit="return confirm('Bu yorumu silmek istediğinizden emin misiniz?');">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger">Sil</button>
+                                </form>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            {% if 'user_id' in session %}
+                <p>Bu ürün için henüz hiç yorum yapılmamış. İlk yorumu sen yap!</p>
+            {% endif %}
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

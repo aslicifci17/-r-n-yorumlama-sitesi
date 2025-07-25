@@ -1,0 +1,38 @@
+<!-- templates/edit_product.html (Kategori Eklendi) -->
+{% extends "base.html" %}
+
+{% block title %}Ürünü Düzenle{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <h1 class="mb-4">"{{ product.name }}" Adlı Ürünü Düzenle</h1>
+        <hr class="mb-4">
+        <form method="POST">
+            <div class="mb-3">
+                <label for="name" class="form-label">Ürün Adı</label>
+                <input type="text" class="form-control" id="name" name="name" value="{{ product.name }}" required>
+            </div>
+            <div class="mb-3">
+                <label for="description" class="form-label">Açıklama</label>
+                <textarea class="form-control" id="description" name="description" rows="5" required>{{ product.description }}</textarea>
+            </div>
+            <!-- YENİ KATEGORİ ALANI -->
+            <div class="mb-3">
+                <label for="category" class="form-label">Kategori</label>
+                <select class="form-select" id="category" name="category_id" required>
+                    <option disabled value="">Seçiniz...</option>
+                    {% for cat in all_categories %}
+                        <option value="{{ cat.id }}" {% if product.category_id == cat.id %}selected{% endif %}>
+                            {{ cat.name }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <!-- YENİ KATEGORİ ALANI SONU -->
+            <button type="submit" class="btn btn-success">Değişiklikleri Kaydet</button>
+            <a href="{{ url_for('product_detail', product_id=product.id) }}" class="btn btn-secondary">İptal</a>
+        </form>
+    </div>
+</div>
+{% endblock %}

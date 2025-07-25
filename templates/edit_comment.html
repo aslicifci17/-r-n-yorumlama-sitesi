@@ -1,0 +1,30 @@
+<!-- templates/edit_comment.html -->
+{% extends "base.html" %}
+
+{% block title %}Yorumu Düzenle{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <h1 class="mb-4">Yorumu Düzenle</h1>
+        <hr class="mb-4">
+        <div class="card bg-light mb-4">
+            <div class="card-body">
+                <p class="card-text fst-italic">"{{ comment.text }}"</p>
+                <footer class="blockquote-footer">
+                    <a href="{{ url_for('product_detail', product_id=comment.product.id) }}">{{ comment.product.name }}</a> adlı ürün için.
+                </footer>
+            </div>
+        </div>
+        
+        <form method="POST">
+            <div class="mb-3">
+                <label for="comment_text" class="form-label">Yeni Yorum Metni</label>
+                <textarea class="form-control" id="comment_text" name="comment_text" rows="4" required>{{ comment.text }}</textarea>
+            </div>
+            <button type="submit" class="btn btn-success">Güncelle</button>
+            <a href="{{ url_for('product_detail', product_id=comment.product.id) }}" class="btn btn-secondary">İptal</a>
+        </form>
+    </div>
+</div>
+{% endblock %}

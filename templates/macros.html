@@ -1,0 +1,45 @@
+<!-- templates/macros.html -->
+{% macro render_pagination(pagination, endpoint) %}
+  <nav aria-label="Sayfa navigasyonu">
+    <ul class="pagination justify-content-center">
+      <!-- Önceki Sayfa Linki -->
+      <li class="page-item {% if not pagination.has_prev %}disabled{% endif %}">
+        <a class="page-link" href="{{ url_for(endpoint, page=pagination.prev_num, **request.args) }}">« Önceki</a>
+      </li>
+      
+      <!-- Sayfa Numaraları -->
+      {% for page_num in pagination.iter_pages(left_edge=1, right_edge=1, left_current=2, right_current=2) %}
+        {% if page_num %}
+          <li class="page-item {% if page_num == pagination.page %}active{% endif %}">
+            <a class="page-link" href="{{ url_for(endpoint, page=page_num, **request.args) }}">{{ page_num }}</a>
+          </li>
+        {% else %}
+          <li class="page-item disabled"><span class="page-link">...</span></li>
+        {% endif %}
+      {% endfor %}
+      
+      <!-- Sonraki Sayfa Linki -->
+      <li class="page-item {% if not pagination.has_next %}disabled{% endif %}">
+        <a class="page-link" href="{{ url_for(endpoint, page=pagination.next_num, **request.args) }}">Sonraki »</a>
+      </li>
+    </ul>
+  </nav>
+{% endmacro %}
+
+<!-- templates/macros.html'in en altına -->
+{% macro render_stars(rating) %}
+    {% set rating_int = rating|int %}
+    {% set rating_half = (rating - rating_int) >= 0.5 %}
+    <span style="color: #ffc107;">
+        {% for i in range(1, 6) %}
+            {% if i <= rating_int %}
+                ★ <!-- Dolu yıldız -->
+            {% elif i == rating_int + 1 and rating_half %}
+                ★ <!-- Yarım yıldız için de dolu gösterelim, basitlik için -->
+            {% else %}
+                ☆ <!-- Boş yıldız -->
+            {% endif %}
+        {% endfor %}
+        <span class="ms-1 text-muted">({{ rating }})</span>
+    </span>
+{% endmacro %}
